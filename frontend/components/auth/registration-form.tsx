@@ -23,6 +23,8 @@ import {
   validateName,
   validatePassword,
 } from "helpers/validation-helpers";
+import { IUserToAuthJSON } from "store/auth-store";
+import { useRouter } from "next/router";
 
 type FormValues = {
   firstName: string;
@@ -40,11 +42,21 @@ export default function RegistrationForm() {
 
   const toast = useToast();
 
-  const { post, response, loading, error } = useFetch("https://localhost:3001");
+  const router = useRouter();
+
+  const { post, response, loading, error } = useFetch<IUserToAuthJSON>(
+    "https://localhost:3001",
+  );
 
   const onSubmit = handleSubmit(async (data) => {
     console.log("On Submit: ", data);
-    await post("/register", { ...data });
+    const { firstName, lastName, password, email } = data;
+    await post("/register", {
+      first_name: firstName,
+      last_name: lastName,
+      password,
+      email,
+    });
     if (!response.ok || error) {
       toast({
         title: "Ошибка",
@@ -58,12 +70,13 @@ export default function RegistrationForm() {
     } else if (response.ok) {
       toast({
         title: "Аккаунт создан",
-        description: "Мы создали аккаунт для Вас",
+        description: "Мы создали аккаунт для Вас, теперь вы можете войти",
         status: "success",
         duration: 9000,
         isClosable: true,
         variant: "solid",
       });
+      setTimeout(() => router.push("/login"), 2000);
     }
   });
   return (
