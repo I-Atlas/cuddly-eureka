@@ -18,7 +18,11 @@ import { PasswordField } from "./password-field";
 import { ButtonLink } from "components/navigation/button-link";
 import useFetch from "use-http";
 import { useForm } from "react-hook-form";
-import { validateEmail, validateName, validatePassword } from "./helpers";
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+} from "helpers/validation-helpers";
 
 type FormValues = {
   firstName: string;

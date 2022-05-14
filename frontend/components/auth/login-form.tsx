@@ -18,7 +18,8 @@ import { useForm } from "react-hook-form";
 import { PasswordField } from "./password-field";
 import { ButtonLink } from "components/navigation/button-link";
 import useFetch from "use-http";
-import { validateEmail, validatePassword } from "./helpers";
+import { validateEmail, validatePassword } from "helpers/validation-helpers";
+import { useLocalStorage } from "helpers/use-local-storage";
 
 type FormValues = {
   email: string;
@@ -35,6 +36,8 @@ export default function LoginForm() {
   const { post, response, loading, error } = useFetch("https://localhost:3001");
 
   const toast = useToast();
+
+  const [token, setToken] = useLocalStorage<string>("token", "");
 
   const onSubmit = handleSubmit(async (data) => {
     console.log("On Submit: ", data);

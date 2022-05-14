@@ -4,7 +4,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  HStack,
   Icon,
   useToast,
 } from "@chakra-ui/react";
@@ -25,10 +24,9 @@ export const FileForm = () => {
     watch,
     handleSubmit,
     reset,
-    setError,
     formState: { errors },
   } = useForm<FormValues>();
-  const { post, response, loading, error } = useFetch("https://localhost:3001");
+  const { post, response, loading, error } = useFetch();
 
   const toast = useToast();
 
@@ -39,22 +37,23 @@ export const FileForm = () => {
     await post("/docs", { docs: data });
     if (!response.ok || error) {
       toast({
-        title: 'Ошибка',
-        description: "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
-        status: 'error',
+        title: "Ошибка",
+        description:
+          "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
+        status: "error",
         duration: 9000,
         isClosable: true,
         variant: "solid",
-      })
+      });
     } else if (response.ok) {
       toast({
-        title: 'Файлы успешно загружены',
+        title: "Файлы успешно загружены",
         description: "Вы успешно загрузили файлы",
-        status: 'success',
+        status: "success",
         duration: 9000,
         isClosable: true,
         variant: "solid",
-      })
+      });
     }
   });
 
