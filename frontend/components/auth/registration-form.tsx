@@ -45,7 +45,7 @@ export default function RegistrationForm() {
   const router = useRouter();
 
   const { post, response, loading, error } = useFetch<IUserToAuthJSON>(
-    "https://localhost:3001",
+    "https://localhost:9000",
   );
 
   const onSubmit = handleSubmit(async (data) => {
