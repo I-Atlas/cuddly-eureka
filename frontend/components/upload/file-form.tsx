@@ -57,7 +57,7 @@ export const FileForm = () => {
   };
 
   return (
-    <Section innerWidth={800} id="upload-docs" position="relative">
+    <Section innerWidth="xl" id="upload-docs" position="relative">
       <form onSubmit={onSubmit}>
         <FormControl mb={32} p={16} isInvalid={!!errors.file_} isRequired>
           <FormLabel>{"Загрузить отчеты"}</FormLabel>
