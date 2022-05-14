@@ -10,6 +10,7 @@ import {
 import { Section } from "components/section";
 import { useForm } from "react-hook-form";
 import { FiFile } from "react-icons/fi";
+import useFetch from "use-http";
 import { FilePreview } from "./file-preview";
 import { FileUpload } from "./file-upload";
 
@@ -23,22 +24,33 @@ export const FileForm = () => {
     watch,
     handleSubmit,
     reset,
+    setError,
     formState: { errors },
   } = useForm<FormValues>();
+  const { post, response, loading, error } = useFetch("https://localhost:3001");
 
   const files = watch("file_");
 
-  const onSubmit = handleSubmit((data) => console.log("On Submit: ", data));
+  const onSubmit = handleSubmit(async (data) => {
+    await post("/docs", { docs: data });
+    if (!response.ok || error) {
+      return setError("file_", {
+        message:
+          "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
+      });
+    }
+    console.log("On Submit: ", data);
+  });
 
   const validateFiles = (value: FileList) => {
     if (value.length < 1) {
-      return "Files is required";
+      return "Пожалуйста, загрузите файлы";
     }
     for (const file of Array.from(value)) {
       const fsMb = file.size / (1024 * 1024);
       const MAX_FILE_SIZE = 10;
       if (fsMb > MAX_FILE_SIZE) {
-        return "Максимальный размер файла 10 мб.";
+        return "Максимальный размер файла 10 Мб";
       }
     }
     return true;
@@ -75,7 +87,7 @@ export const FileForm = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <Button type="submit" colorScheme={"green"} m={8}>
+        <Button isLoading={loading} type="submit" colorScheme={"green"} m={8}>
           Продолжить
         </Button>
         <Button colorScheme={"red"} m={8} onClick={() => reset()}>
