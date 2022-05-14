@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import { Section } from "components/section";
 
@@ -28,19 +29,34 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm<FormValues>();
 
   const { post, response, loading, error } = useFetch("https://localhost:3001");
 
+  const toast = useToast();
+
   const onSubmit = handleSubmit(async (data) => {
     console.log("On Submit: ", data);
     await post("/login", { ...data });
     if (!response.ok || error) {
-      return setError("password", {
-        message:
+      toast({
+        title: "Ошибка",
+        description:
           "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+        variant: "solid",
+      });
+    } else if (response.ok) {
+      toast({
+        title: "Успешный вход",
+        description: "Вы успешно вошли в аккаунт",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+        variant: "solid",
       });
     }
   });
@@ -85,7 +101,7 @@ export default function LoginForm() {
                     id="email"
                     type="email"
                   />
-                   <FormErrorMessage>
+                  <FormErrorMessage>
                     {errors.email && errors?.email.message}
                   </FormErrorMessage>
                 </FormControl>

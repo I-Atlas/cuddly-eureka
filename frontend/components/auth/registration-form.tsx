@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import { Section } from "components/section";
 
@@ -30,9 +31,10 @@ export default function RegistrationForm() {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm<FormValues>();
+
+  const toast = useToast();
 
   const { post, response, loading, error } = useFetch("https://localhost:3001");
 
@@ -40,9 +42,23 @@ export default function RegistrationForm() {
     console.log("On Submit: ", data);
     await post("/register", { ...data });
     if (!response.ok || error) {
-      return setError("password", {
-        message:
+      toast({
+        title: "Ошибка",
+        description:
           "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+        variant: "solid",
+      });
+    } else if (response.ok) {
+      toast({
+        title: "Аккаунт создан",
+        description: "Мы создали аккаунт для Вас",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+        variant: "solid",
       });
     }
   });

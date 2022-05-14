@@ -6,6 +6,7 @@ import {
   FormLabel,
   HStack,
   Icon,
+  useToast,
 } from "@chakra-ui/react";
 import { Section } from "components/section";
 import { useForm } from "react-hook-form";
@@ -29,17 +30,32 @@ export const FileForm = () => {
   } = useForm<FormValues>();
   const { post, response, loading, error } = useFetch("https://localhost:3001");
 
+  const toast = useToast();
+
   const files = watch("file_");
 
   const onSubmit = handleSubmit(async (data) => {
+    console.log("On Submit: ", data);
     await post("/docs", { docs: data });
     if (!response.ok || error) {
-      return setError("file_", {
-        message:
-          "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
-      });
+      toast({
+        title: 'Ошибка',
+        description: "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        variant: "solid",
+      })
+    } else if (response.ok) {
+      toast({
+        title: 'Файлы успешно загружены',
+        description: "Вы успешно загрузили файлы",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        variant: "solid",
+      })
     }
-    console.log("On Submit: ", data);
   });
 
   const validateFiles = (value: FileList) => {
