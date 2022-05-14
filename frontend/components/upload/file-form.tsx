@@ -63,11 +63,11 @@ export const FileForm = () => {
           </FileUpload>
 
           {files && (
-            <HStack>
+            <Flex direction="row" flexWrap="wrap" maxWidth="full">
               {Array.from(files).map((file, index) => (
                 <FilePreview key={index} name={file.name} />
               ))}
-            </HStack>
+            </Flex>
           )}
 
           <FormErrorMessage>

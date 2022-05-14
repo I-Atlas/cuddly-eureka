@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Icon, Text, VStack } from "@chakra-ui/react";
+import { Icon, Text, Flex } from "@chakra-ui/react";
 import { RiFileExcel2Line } from "react-icons/ri";
 
 interface FilePreviewProps {
@@ -8,9 +8,11 @@ interface FilePreviewProps {
 
 export const FilePreview: FC<FilePreviewProps> = ({ name }) => {
   return (
-    <VStack m={8}>
+    <Flex direction="column" align="center" m={4}>
       <Icon as={RiFileExcel2Line} w={8} h={8} />
-      <Text noOfLines={1}>{name}</Text>
-    </VStack>
+      <Text maxW={20} noOfLines={1}>
+        {name}
+      </Text>
+    </Flex>
   );
 };
