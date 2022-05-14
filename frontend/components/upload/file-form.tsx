@@ -9,10 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { Section } from "components/section";
 import { useForm } from "react-hook-form";
-import { FiFile } from "react-icons/fi";
 import useFetch from "use-http";
-import { FilePreview } from "./file-preview";
-import { FileUpload } from "./file-upload";
+import { FormField } from "./form-field";
 
 type FormValues = {
   file_: FileList;
@@ -20,7 +18,6 @@ type FormValues = {
 
 export const FileForm = () => {
   const {
-    register,
     watch,
     handleSubmit,
     reset,
@@ -29,8 +26,6 @@ export const FileForm = () => {
   const { post, response, loading, error } = useFetch();
 
   const toast = useToast();
-
-  const files = watch("file_");
 
   const onSubmit = handleSubmit(async (data) => {
     console.log("On Submit: ", data);
@@ -57,50 +52,16 @@ export const FileForm = () => {
     }
   });
 
-  const validateFiles = (value: FileList) => {
-    if (value.length < 1) {
-      return "Пожалуйста, загрузите файлы";
-    }
-    for (const file of Array.from(value)) {
-      const fsMb = file.size / (1024 * 1024);
-      const MAX_FILE_SIZE = 10;
-      if (fsMb > MAX_FILE_SIZE) {
-        return "Максимальный размер файла 10 Мб";
-      }
-    }
-    return true;
-  };
+  const titles = ["платежные поручения", "заявки на возврат"];
 
   return (
     <Section innerWidth="xl" id="upload-docs" position="relative">
       <form onSubmit={onSubmit}>
-        <FormControl mb={32} p={16} isInvalid={!!errors.file_} isRequired>
-          <FormLabel>{"Загрузить отчеты"}</FormLabel>
-
-          <FileUpload
-            accept={
-              ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            }
-            multiple
-            register={register("file_", { validate: validateFiles })}
-          >
-            <Button w={"full"} leftIcon={<Icon as={FiFile} />}>
-              Загрузить
-            </Button>
-          </FileUpload>
-
-          {files && (
-            <Flex direction="row" flexWrap="wrap" maxWidth="full">
-              {Array.from(files).map((file, index) => (
-                <FilePreview key={index} name={file.name} />
-              ))}
-            </Flex>
-          )}
-
-          <FormErrorMessage>
-            {errors.file_ && errors?.file_.message}
-          </FormErrorMessage>
-        </FormControl>
+        {titles.map((title, index) => (
+          <>
+            <FormField key={index} title={title} />
+          </>
+        ))}
 
         <Button isLoading={loading} type="submit" colorScheme={"green"} m={8}>
           Продолжить
