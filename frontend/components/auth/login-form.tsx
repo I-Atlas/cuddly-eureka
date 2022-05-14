@@ -14,28 +14,36 @@ import {
 } from "@chakra-ui/react";
 import { Section } from "components/section";
 
+import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { PasswordField } from "./password-field";
 import { ButtonLink } from "components/navigation/button-link";
 import useFetch from "use-http";
 import { validateEmail, validatePassword } from "helpers/validation-helpers";
 import { useLocalStorage } from "helpers/use-local-storage";
+import { context } from "store/root-store";
+import { IUserToAuthJSON } from "store/auth-store";
+import { useContext } from "react";
 
 type FormValues = {
   email: string;
   password: string;
 };
 
-export default function LoginForm() {
+function LoginForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
 
-  const { post, response, loading, error } = useFetch("https://localhost:3001");
+  const { post, response, loading, error } = useFetch<IUserToAuthJSON>(
+    "https://localhost:3001",
+  );
 
   const toast = useToast();
+
+  const { authStore } = useContext(context);
 
   const [token, setToken] = useLocalStorage<string>("token", "");
 
@@ -52,7 +60,16 @@ export default function LoginForm() {
         isClosable: true,
         variant: "solid",
       });
-    } else if (response.ok) {
+    } else if (response.data && response.ok) {
+      const { token, last_name, first_name, email, name } = response.data;
+      setToken(token);
+      authStore.setUser({
+        last_name,
+        first_name,
+        email,
+        name,
+      });
+      authStore.setAuth(true);
       toast({
         title: "Успешный вход",
         description: "Вы успешно вошли в аккаунт",
@@ -138,3 +155,5 @@ export default function LoginForm() {
     </Section>
   );
 }
+
+export default observer(LoginForm);

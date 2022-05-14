@@ -23,6 +23,7 @@
       "public/*": ["public/*"],
       "styles/*": ["styles/*"],
       "helpers/*": ["helpers/*"],
+      "store/*": ["store/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
