@@ -75,7 +75,7 @@ export const FileForm = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <Button colorScheme={"green"} m={8}>
+        <Button type="submit" colorScheme={"green"} m={8}>
           Продолжить
         </Button>
         <Button colorScheme={"red"} m={8} onClick={() => reset()}>
