@@ -32,7 +32,8 @@ export const FileForm: FC = () => {
 
   const toast = useToast();
 
-  const files = watch("payments");
+  const paymentsFiles = watch("payments");
+  const returnRequestsFiles = watch("returnRequests");
 
   const onSubmit = handleSubmit(async (data) => {
     const payments = Array.from(data.payments);
@@ -45,9 +46,7 @@ export const FileForm: FC = () => {
       formData.append("returnRequests", file);
     });
 
-    console.log(formData);
-
-    // await post(formData);
+    await post(formData);
     if (!response.ok || error) {
       toast({
         title: "Ошибка",
@@ -59,6 +58,12 @@ export const FileForm: FC = () => {
         variant: "solid",
       });
     } else if (response.ok) {
+      // const blob = await response.blob()
+      //    var fileName = response.getResponseHeader("fileName") //if you have the fileName header available
+      //    var link=document.createElement('a');
+      //    link.href=window.URL.createObjectURL(blob);
+      //    link.download=fileName;
+      //    link.click();
       toast({
         title: "Файлы успешно загружены",
         description: "Вы успешно загрузили файлы",
@@ -103,9 +108,9 @@ export const FileForm: FC = () => {
             </Button>
           </FileUpload>
 
-          {files && (
+          {paymentsFiles && (
             <Flex direction="row" flexWrap="wrap" maxWidth="full">
-              {Array.from(files).map((file, index) => (
+              {Array.from(paymentsFiles).map((file, index) => (
                 <FilePreview key={index} name={file.name} />
               ))}
             </Flex>
@@ -137,9 +142,9 @@ export const FileForm: FC = () => {
             </Button>
           </FileUpload>
 
-          {files && (
+          {returnRequestsFiles && (
             <Flex direction="row" flexWrap="wrap" maxWidth="full">
-              {Array.from(files).map((file, index) => (
+              {Array.from(returnRequestsFiles).map((file, index) => (
                 <FilePreview key={index} name={file.name} />
               ))}
             </Flex>
