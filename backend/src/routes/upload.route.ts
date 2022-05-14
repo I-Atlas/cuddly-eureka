@@ -45,13 +45,19 @@ router.post(
     try {
       const fileBuffer = req.file.buffer;
 
-      const workbook = readXlsx(fileBuffer);
+      const workbook = readXlsx(fileBuffer, {
+        type: 'buffer',
+        raw: true,
+        cellDates: true,
+        cellNF: false,
+        cellText: false,
+      });
 
       const sheetNames = workbook.SheetNames;
 
       const sheet = workbook.Sheets[sheetNames[0]];
 
-      const aoa = utils.sheet_to_json(sheet, { header: 1 });
+      const aoa = utils.sheet_to_json(sheet, { header: 1, raw: false, rawNumbers: true }).slice(1);
 
       for (const row of aoa) {
         const object: Partial<IPayment> = {};
