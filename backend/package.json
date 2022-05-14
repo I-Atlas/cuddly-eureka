@@ -5,9 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "npm run nodemon",
-    "start": "export APP_ENV=production; node -r ts-node/register/transpile-only -r tsconfig-paths/register -r dotenv/config build/index.js",
+    "start": "export APP_ENV=production; node -r ts-node/register/transpile-only -r tsconfig-paths/register build/index.js",
     "build": "tsc",
-    "nodemon": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' -r ts-node/register/transpile-only -r tsconfig-paths/register -r dotenv/config --exec 'ts-node --files' src/index.ts"
+    "nodemon": "nodemon --watch 'src/**/*.ts' -r ts-node/register/transpile-only -r tsconfig-paths/register --exec 'ts-node --files' src/index.ts"
   },
   "author": "",
   "license": "ISC",

@@ -6,6 +6,7 @@ services:
     ports:
       - "27017:27017"
     environment:
+      MONGO_INITDB_DATABASE: ${DATABASE_NAME}
       MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
 
@@ -19,10 +20,15 @@ services:
     depends_on:
       - mongodb
     environment:
+      DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_HOST: ${DATABASE_HOST}
       DATABASE_PORT: ${DATABASE_PORT}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      APP_PORT: ${APP_PORT}
+      APP_PREFIX_PATH: ${APP_PREFIX_PATH}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE: ${JWT_EXPIRE}
 
   frontend:
     build: frontend

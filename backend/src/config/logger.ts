@@ -1,12 +1,12 @@
-import winston from 'winston'
-import { IS_PRODUCTION } from '@/config/config'
+import winston from 'winston';
+import { IS_PRODUCTION } from '@/config/config';
 
 const enumerateErrorFormat = winston.format((info) => {
   if (info instanceof Error) {
-    Object.assign(info, { message: info.stack })
+    Object.assign(info, { message: info.stack });
   }
-  return info
-})
+  return info;
+});
 
 const logger = winston.createLogger({
   level: IS_PRODUCTION ? 'info' : 'debug',
@@ -21,6 +21,6 @@ const logger = winston.createLogger({
       stderrLevels: ['error'],
     }),
   ],
-})
+});
 
-export default logger
+export default logger;

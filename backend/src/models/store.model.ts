@@ -1,12 +1,13 @@
-import { Schema, Document, model } from 'mongoose'
+import { Schema, Document, model } from 'mongoose';
 
 export interface IStore {
-  name: string
-  description: string
-  image: string
+  name: string;
+  description: string;
+  image: string;
 }
 
-export default interface IStoreModel extends Document, IStore {}
+export default interface IStoreModel extends Document, IStore {
+}
 
 const schema = new Schema(
   {
@@ -28,6 +29,6 @@ const schema = new Schema(
   {
     timestamps: true,
   },
-)
+);
 
-export const Store = model<IStoreModel>('Store', schema)
+export const Store = model<IStoreModel>('Store', schema);
