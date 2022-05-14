@@ -1,8 +1,8 @@
 import {
   Box,
   Button,
-  Divider,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   HStack,
@@ -13,10 +13,38 @@ import {
 } from "@chakra-ui/react";
 import { Section } from "components/section";
 
+import { useForm } from "react-hook-form";
 import { PasswordField } from "./password-field";
 import { ButtonLink } from "components/navigation/button-link";
+import useFetch from "use-http";
+import { validateEmail, validatePassword } from "./helpers";
+
+type FormValues = {
+  email: string;
+  password: string;
+};
 
 export default function LoginForm() {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const { post, response, loading, error } = useFetch("https://localhost:3001");
+
+  const onSubmit = handleSubmit(async (data) => {
+    console.log("On Submit: ", data);
+    await post("/login", { ...data });
+    if (!response.ok || error) {
+      return setError("password", {
+        message:
+          "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
+      });
+    }
+  });
+
   return (
     <Section id="login-form" innerWidth="xl" position="relative">
       <Stack spacing="8">
@@ -48,13 +76,38 @@ export default function LoginForm() {
           borderRadius="xl"
         >
           <Stack spacing="6">
-            <Stack spacing="5">
-              <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <Input id="email" type="email" />
-              </FormControl>
-              <PasswordField />
-            </Stack>
+            <form onSubmit={onSubmit}>
+              <Stack spacing="5">
+                <FormControl isRequired isInvalid={Boolean(errors.email)}>
+                  <FormLabel htmlFor="email">Email</FormLabel>
+                  <Input
+                    {...register("email", { validate: validateEmail })}
+                    id="email"
+                    type="email"
+                  />
+                   <FormErrorMessage>
+                    {errors.email && errors?.email.message}
+                  </FormErrorMessage>
+                </FormControl>
+                <PasswordField
+                  error={errors.password}
+                  isInvalid={Boolean(errors.password)}
+                  register={register("password", {
+                    validate: validatePassword,
+                  })}
+                />
+              </Stack>
+              <Stack pt={8} spacing="6">
+                <Button
+                  isLoading={loading}
+                  type="submit"
+                  colorScheme="purple"
+                  variant="solid"
+                >
+                  Войти
+                </Button>
+              </Stack>
+            </form>
             <HStack justify="flex-end">
               <Button variant="link" colorScheme="purple" size="sm">
                 Забыли пароль?

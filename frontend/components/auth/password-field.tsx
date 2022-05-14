@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormErrorMessage,
   FormLabel,
   IconButton,
   Input,
@@ -10,46 +11,55 @@ import {
   useMergeRefs,
 } from "@chakra-ui/react";
 import React from "react";
+import { FieldError, UseFormRegisterReturn } from "react-hook-form";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
-export const PasswordField = React.forwardRef<HTMLInputElement, InputProps>(
-  (props, ref) => {
-    const { isOpen, onToggle } = useDisclosure();
-    const inputRef = React.useRef<HTMLInputElement>(null);
+interface PasswordFieldProps {
+  register: UseFormRegisterReturn;
+  isInvalid: boolean;
+  error?: FieldError;
+}
 
-    const mergeRef = useMergeRefs(inputRef, ref);
-    const onClickReveal = () => {
-      onToggle();
-      if (inputRef.current) {
-        inputRef.current.focus({ preventScroll: true });
-      }
-    };
+export const PasswordField = React.forwardRef<
+  HTMLInputElement,
+  PasswordFieldProps
+>(({ register, isInvalid, error }, ref) => {
+  const { isOpen, onToggle } = useDisclosure();
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-    return (
-      <FormControl>
-        <FormLabel htmlFor="password">Пароль</FormLabel>
-        <InputGroup>
-          <InputRightElement>
-            <IconButton
-              variant="link"
-              aria-label={isOpen ? "Mask password" : "Reveal password"}
-              icon={isOpen ? <HiEyeOff /> : <HiEye />}
-              onClick={onClickReveal}
-            />
-          </InputRightElement>
-          <Input
-            id="password"
-            ref={mergeRef}
-            name="password"
-            type={isOpen ? "text" : "password"}
-            autoComplete="current-password"
-            required
-            {...props}
+  const mergeRef = useMergeRefs(inputRef, ref);
+  const onClickReveal = () => {
+    onToggle();
+    if (inputRef.current) {
+      inputRef.current.focus({ preventScroll: true });
+    }
+  };
+
+  return (
+    <FormControl isInvalid={isInvalid} isRequired>
+      <FormLabel htmlFor="password">Пароль</FormLabel>
+      <InputGroup>
+        <InputRightElement>
+          <IconButton
+            variant="link"
+            aria-label={isOpen ? "Mask password" : "Reveal password"}
+            icon={isOpen ? <HiEyeOff /> : <HiEye />}
+            onClick={onClickReveal}
           />
-        </InputGroup>
-      </FormControl>
-    );
-  },
-);
+        </InputRightElement>
+        <Input
+          id="password"
+          type={isOpen ? "text" : "password"}
+          autoComplete="current-password"
+          required
+          {...register}
+        />
+      </InputGroup>
+      <FormErrorMessage>
+        {error && error.message}
+      </FormErrorMessage>
+    </FormControl>
+  );
+});
 
 PasswordField.displayName = "PasswordField";

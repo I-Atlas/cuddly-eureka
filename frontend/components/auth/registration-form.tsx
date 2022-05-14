@@ -1,8 +1,8 @@
 import {
   Box,
   Button,
-  Divider,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   HStack,
@@ -15,8 +15,37 @@ import { Section } from "components/section";
 
 import { PasswordField } from "./password-field";
 import { ButtonLink } from "components/navigation/button-link";
+import useFetch from "use-http";
+import { useForm } from "react-hook-form";
+import { validateEmail, validateName, validatePassword } from "./helpers";
+
+type FormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
 
 export default function RegistrationForm() {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const { post, response, loading, error } = useFetch("https://localhost:3001");
+
+  const onSubmit = handleSubmit(async (data) => {
+    console.log("On Submit: ", data);
+    await post("/register", { ...data });
+    if (!response.ok || error) {
+      return setError("password", {
+        message:
+          "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
+      });
+    }
+  });
   return (
     <Section id="registration-form" innerWidth="xl" position="relative">
       <Stack spacing="8">
@@ -44,24 +73,60 @@ export default function RegistrationForm() {
           borderRadius="xl"
         >
           <Stack spacing="6">
-            <Stack spacing="5">
-              <FormControl>
-                <FormLabel htmlFor="text">Имя</FormLabel>
-                <Input id="firstName" type="text" />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="text">Фамилия</FormLabel>
-                <Input id="lastName" type="text" />
-              </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <Input id="email" type="email" />
-              </FormControl>
-              <PasswordField />
-            </Stack>
-            <Stack spacing="6">
-              <Button colorScheme="purple" variant="solid">Зарегистрироваться</Button>
-            </Stack>
+            <form onSubmit={onSubmit}>
+              <Stack spacing="5">
+                <FormControl isRequired isInvalid={Boolean(errors.firstName)}>
+                  <FormLabel htmlFor="text">Имя</FormLabel>
+                  <Input
+                    {...register("firstName", { validate: validateName })}
+                    id="firstName"
+                    type="text"
+                  />
+                  <FormErrorMessage>
+                    {errors.firstName && errors?.firstName.message}
+                  </FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={Boolean(errors.lastName)} isRequired>
+                  <FormLabel htmlFor="text">Фамилия</FormLabel>
+                  <Input
+                    {...register("lastName", { validate: validateName })}
+                    id="lastName"
+                    type="text"
+                  />
+                  <FormErrorMessage>
+                    {errors.lastName && errors?.lastName.message}
+                  </FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={Boolean(errors.email)} isRequired>
+                  <FormLabel htmlFor="email">Email</FormLabel>
+                  <Input
+                    {...register("email", { validate: validateEmail })}
+                    id="email"
+                    type="email"
+                  />
+                  <FormErrorMessage>
+                    {errors.email && errors?.email.message}
+                  </FormErrorMessage>
+                </FormControl>
+                <PasswordField
+                  error={errors.password}
+                  isInvalid={Boolean(errors.password)}
+                  register={register("password", {
+                    validate: validatePassword,
+                  })}
+                />
+              </Stack>
+              <Stack pt={8} spacing="6">
+                <Button
+                  isLoading={loading}
+                  type="submit"
+                  colorScheme="purple"
+                  variant="solid"
+                >
+                  Зарегистрироваться
+                </Button>
+              </Stack>
+            </form>
           </Stack>
         </Box>
       </Stack>
