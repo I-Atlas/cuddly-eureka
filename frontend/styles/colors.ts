@@ -30,14 +30,3 @@ export const colors = {
 }
 
 export type ColorKeys = keyof typeof colors
-
-export const accentKeys: ColorKeys[] = [
-  'green',
-  'cyan',
-  'orange',
-  'blue',
-  'pink',
-  'teal',
-  'purple',
-  'red'
-]

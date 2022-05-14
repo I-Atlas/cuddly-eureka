@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 
 import { motion } from "framer-motion";
+import Navigation from "components/navigation/navigation";
 
 interface InnerPageLayoutProps {
 }
@@ -16,6 +17,7 @@ export default function InnerPageLayout({
 }: PropsWithChildren<InnerPageLayoutProps>) {
   return (
     <>
+      <Navigation />
       <motion.main
         initial="hidden"
         animate="enter"

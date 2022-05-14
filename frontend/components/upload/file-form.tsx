@@ -7,7 +7,7 @@ import {
   HStack,
   Icon,
 } from "@chakra-ui/react";
-import { Section } from "components/Section";
+import { Section } from "components/section";
 import { useForm } from "react-hook-form";
 import { FiFile } from "react-icons/fi";
 import { FilePreview } from "./file-preview";
@@ -45,9 +45,9 @@ export const FileForm = () => {
   };
 
   return (
-    <Section innerWidth={600} id="upload-docs" position="relative">
+    <Section innerWidth={800} id="upload-docs" position="relative">
       <form onSubmit={onSubmit}>
-        <FormControl p={8} isInvalid={!!errors.file_} isRequired>
+        <FormControl mb={32} p={16} isInvalid={!!errors.file_} isRequired>
           <FormLabel>{"Загрузить отчеты"}</FormLabel>
 
           <FileUpload
