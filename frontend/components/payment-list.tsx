@@ -1,19 +1,11 @@
-import {
-  Flex,
-  Avatar,
-  Text,
-  Box,
-  Icon,
-  Button,
-  Heading,
-  Spinner,
-} from "@chakra-ui/react";
+import { Box, Icon, Button, Spinner } from "@chakra-ui/react";
 
 import { FiDownload, FiEyeOff } from "react-icons/fi";
 
 import { Table } from "react-chakra-pagination";
 import { useState } from "react";
 import useFetch from "use-http";
+import { Section } from "./section";
 
 export interface IPayment {
   documentNumber: string;
@@ -33,6 +25,12 @@ export interface IPayment {
   receiverCorr: string;
 }
 
+interface IPaymentList {
+  payments: IPayment[];
+  totalPage: number;
+  currentPage: number;
+}
+
 export default function PaymentList() {
   // Control current Page
   const [page, setPage] = useState(1);
@@ -41,17 +39,17 @@ export default function PaymentList() {
     loading,
     error,
     data: payments,
-  } = useFetch<IPayment[]>(
+  } = useFetch<IPaymentList>(
     `/payment?page=${page}&perPage=10`,
     {
       onNewData: (currDocs, newDocs) => [...currDocs, ...newDocs],
       data: [],
     },
-    [page],
+    [page]
   ); // onMount AND onUpdate whenever `page` changes
 
   // Formatter for each user
-  const tableData = (payments ?? []).map((payment) => {
+  const tableData = (payments?.payments ?? []).map((payment) => {
     const {
       documentNumber,
       date,
@@ -166,11 +164,7 @@ export default function PaymentList() {
   ];
 
   return (
-    <Box p="12">
-      <Heading size="sm" as="h3">
-        Платежные поручения
-      </Heading>
-
+    <Section id="payments" innerWidth="xl" position="relative">
       <Box mt="6">
         {loading && <Spinner size={"xl"} />}
         {error && "Error"}
@@ -182,7 +176,7 @@ export default function PaymentList() {
               icon: FiEyeOff,
               text: "Ничего не найдено",
             }}
-            totalRegisters={payments?.length ?? 0}
+            totalRegisters={payments?.payments?.length ?? 0}
             page={page}
             // Listen change page event and control the current page using state
             onPageChange={(page) => setPage(page)}
@@ -191,6 +185,6 @@ export default function PaymentList() {
           />
         )}
       </Box>
-    </Box>
+    </Section>
   );
 }

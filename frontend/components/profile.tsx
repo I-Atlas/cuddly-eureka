@@ -49,7 +49,7 @@ function ProfileWithImage() {
   }, []);
 
   return (
-    <Section id="profile">
+    <Section innerWidth="xl" position="relative" id="profile">
       <Center py={6}>
         <Box
           maxW={"270px"}
