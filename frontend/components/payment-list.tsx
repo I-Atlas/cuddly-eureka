@@ -124,13 +124,9 @@ export default function PaymentList() {
       receiverBic,
       receiverCorr,
       action: (
-        <Button
-          colorScheme="gray"
-          onClick={() => console.log("download")}
-          size="sm"
-        >
+        <a href={`http://localhost:9000/payment/${documentNumber}/report`}>
           <Icon as={FiDownload} fontSize="20" />
-        </Button>
+        </a>
       ),
     };
   });

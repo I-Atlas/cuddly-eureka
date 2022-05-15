@@ -13,7 +13,7 @@ router.get('/', passport.authenticate(['jwt', 'anonymous'], { session: false }),
   const safePerPage = parseInt(perPage as string, 10);
   // logger.debug('%o', req.user)
   const payments = await Payment.find()
-    .limit(safePage * 1)
+    .limit(safePerPage)
     .skip((safePage - 1) * safePerPage)
     .exec();
 
