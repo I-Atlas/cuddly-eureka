@@ -1,16 +1,12 @@
 import { Schema, Document, model, Date } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-export interface IPayment {
+export interface IReturnRequest {
+  requestNumber: string;
+  requestDate: Date;
+  requestAmount: string;
   documentNumber: string;
   date: Date;
-  amount: string;
-  payer: string;
-  payerINN: string;
-  payerKPP: string;
-  payerAccount: string;
-  payerBic: string;
-  payerCorr: string;
   receiver: string;
   receiverINN: string;
   receiverKPP: string;
@@ -19,45 +15,29 @@ export interface IPayment {
   receiverCorr: string;
 }
 
-export default interface IPaymentModel extends Document, IPayment {}
+export default interface IReturnRequestModel extends Document, IReturnRequest {}
 
 const schema = new Schema(
   {
-    documentNumber: {
+    requestNumber: {
       type: String,
       required: true,
       unique: true,
     },
-    date: {
+    requestDate: {
       type: Date,
       required: true,
     },
-    amount: {
+    requestAmount: {
       type: String,
       required: true,
     },
-    payer: {
+    documentNumber: {
       type: String,
       required: true,
     },
-    payerINN: {
-      type: String,
-      required: true,
-    },
-    payerKPP: {
-      type: String,
-      required: true,
-    },
-    payerAccount: {
-      type: String,
-      required: true,
-    },
-    payerBic: {
-      type: String,
-      required: true,
-    },
-    payerCorr: {
-      type: String,
+    date: {
+      type: Date,
       required: true,
     },
     receiver: {
@@ -92,4 +72,4 @@ const schema = new Schema(
 
 schema.plugin(uniqueValidator);
 
-export const Payment = model<IPaymentModel>('payments', schema);
+export const ReturnRequest = model<IReturnRequestModel>('returnRequests', schema);

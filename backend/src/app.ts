@@ -41,7 +41,7 @@ app.use(mongoSanitize());
 // gzip compression
 app.use(compression());
 
-app.use(cors());
+app.use(cors({ origin: '*' }));
 
 app.get('/', (_req, res) => {
   res.send('Healthy');
