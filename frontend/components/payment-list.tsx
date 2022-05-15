@@ -42,11 +42,51 @@ export default function PaymentList() {
   } = useFetch<IPaymentList>(
     `/payment?page=${page}&perPage=10`,
     {
-      onNewData: (currDocs, newDocs) => [...currDocs, ...newDocs],
+      // onNewData: (currDocs, newDocs) => [...currDocs, ...newDocs],
       data: [],
     },
     [page]
   ); // onMount AND onUpdate whenever `page` changes
+
+  // const onSubmit = async (data) => {
+  //   const payments = Array.from(data.payments);
+  //   const returnRequests = Array.from(data.returnRequests);
+  //   const formData = new FormData();
+  //   payments.forEach(async (file) => {
+  //     formData.append("payments", file);
+  //   });
+  //   returnRequests.forEach(async (file) => {
+  //     formData.append("returnRequests", file);
+  //   });
+
+  //   await post(formData);
+  //   if (!response.ok || error) {
+  //     toast({
+  //       title: "Ошибка",
+  //       description:
+  //         "Ой, что-то пошло не так! Попробуйте еще раз или повторите попытку позднее",
+  //       status: "error",
+  //       duration: 9000,
+  //       isClosable: true,
+  //       variant: "solid",
+  //     });
+  //   } else if (response.ok) {
+  //     const blob = await response.blob();
+  //     const fileName = response.headers.get("Content-Disposition")?.split('filename=')[1].split(';')[0];;
+  //     const link = document.createElement("a");
+  //     link.href = window.URL.createObjectURL(blob);
+  //     link.download = fileName ?? 'Report';
+  //     link.click();
+  //     toast({
+  //       title: "Файлы успешно загружены",
+  //       description: "Вы успешно загрузили файлы",
+  //       status: "success",
+  //       duration: 9000,
+  //       isClosable: true,
+  //       variant: "solid",
+  //     });
+  //   }
+  // };
 
   // Formatter for each user
   const tableData = (payments?.payments ?? []).map((payment) => {
@@ -164,11 +204,11 @@ export default function PaymentList() {
   ];
 
   return (
-    <Section id="payments" innerWidth="xl" position="relative">
-      <Box mt="6">
+    <Section id="payments" innerWidth={1280} position="relative">
+      <Box w={"full"} overflow="auto" mt="6">
         {loading && <Spinner size={"xl"} />}
         {error && "Error"}
-        {payments && (
+        {payments?.payments && (
           <Table
             colorScheme="blue"
             // Fallback component when list is empty
@@ -176,7 +216,7 @@ export default function PaymentList() {
               icon: FiEyeOff,
               text: "Ничего не найдено",
             }}
-            totalRegisters={payments?.payments?.length ?? 0}
+            totalRegisters={payments.payments.length ?? 0}
             page={page}
             // Listen change page event and control the current page using state
             onPageChange={(page) => setPage(page)}
