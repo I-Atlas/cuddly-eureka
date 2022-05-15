@@ -45,7 +45,7 @@ export default function RegistrationForm() {
   const router = useRouter();
 
   const { post, response, loading, error } = useFetch<IUserToAuthJSON>(
-    "https://localhost:9000",
+    "http://localhost:9000",
   );
 
   const onSubmit = handleSubmit(async (data) => {
@@ -67,7 +67,7 @@ export default function RegistrationForm() {
         isClosable: true,
         variant: "solid",
       });
-    } else if (response.ok) {
+    } else if (response.data && response.ok) {
       toast({
         title: "Аккаунт создан",
         description: "Мы создали аккаунт для Вас, теперь вы можете войти",
@@ -76,7 +76,7 @@ export default function RegistrationForm() {
         isClosable: true,
         variant: "solid",
       });
-      setTimeout(() => router.push("/login"), 2000);
+      setTimeout(() => router.push("/login"), 1000);
     }
   });
   return (

@@ -5,7 +5,7 @@ import { Provider } from "use-http";
 import InnerPageLayout from "layout/inner-page";
 import { useLocalStorage } from "helpers/use-local-storage";
 
-export default function Home({}: NextPage) {
+export default function Documents({}: NextPage) {
   const [token, setToken] = useLocalStorage<string>("token", "");
   
   const options = {
@@ -23,7 +23,7 @@ export default function Home({}: NextPage) {
   return (
     <InnerPageLayout>
       <Provider url="http://localhost:9000" options={options}>
-        <FileForm />
+        {/* <FileForm /> */}
       </Provider>
     </InnerPageLayout>
   );

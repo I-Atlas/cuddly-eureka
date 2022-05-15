@@ -6,13 +6,18 @@ import {
   Container,
   Icon,
   Box,
+  useBreakpointValue,
+  HStack,
 } from "@chakra-ui/react";
 
 import { CgClose, CgMenu } from "react-icons/cg";
 import { VscTerminalBash } from "react-icons/vsc";
 import MobileNavigation from "components/navigation/mobile-navigation";
 import { ButtonLink } from "./button-link";
-import { ColorModeSwitcher } from "components/color-mode-switcher";
+import { ColorModeSwitcher } from "components/navigation/color-mode-switcher";
+import { LogoutButton } from "./logout-button";
+import { routerLinks } from "helpers/router-links";
+import { NavigationLink } from "./navigation-link";
 
 export default function Navigation() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -25,16 +30,29 @@ export default function Navigation() {
             <Icon as={VscTerminalBash} w={8} h={8} mr={4} /> Кейс №8
           </Flex>
         </NextLink>
-        {/* <ButtonLink
-          href="/login"
-          display={["none", "none", "inherit"]}
-          rounded="full"
-          fontWeight={500}
+        <HStack
+          as="nav"
+          alignItems="center"
+          spacing={{ md: 4, xl: 16 }}
+          display={{ base: "none", md: "flex" }}
         >
-          Начать
-        </ButtonLink> */}
-        <ColorModeSwitcher display={["none", "none", "flex"]} />
-
+          {routerLinks.map((link, index) => (
+            <NavigationLink
+              key={index}
+              name={link.name}
+              path={link.path}
+              onClose={onClose}
+            />
+          ))}
+        </HStack>
+        <HStack
+          alignItems="center"
+          spacing={{ md: 4, xl: 16 }}
+          display={{ base: "none", md: "flex" }}
+        >
+          <ColorModeSwitcher />
+          <LogoutButton />
+        </HStack>
         <IconButton
           variant="ghost"
           color="current"

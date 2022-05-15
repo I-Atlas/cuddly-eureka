@@ -1,11 +1,13 @@
 import { useEffect, ReactNode, useContext, FC } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { context } from "store/root-store";
+import { useLocalStorage } from "helpers/use-local-storage";
 
 function RouteGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { authStore } = useContext(context);
+  const [token, setToken] = useLocalStorage<string>("token", "");
 
   useEffect(() => {
     // on initial load - run auth check
@@ -31,7 +33,7 @@ function RouteGuard({ children }: { children: ReactNode }) {
     // redirect to login page if accessing a private page and not logged in
     const publicPaths = ["/login", "/registration"];
     const path = url.split("?")[0];
-    if (!authStore.isAuth && !publicPaths.includes(path)) {
+    if (!authStore.isAuth && !token && !publicPaths.includes(path)) {
       authStore.setAuth(false);
       router.push({
         pathname: "/login",

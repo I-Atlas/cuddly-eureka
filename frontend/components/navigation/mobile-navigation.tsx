@@ -1,9 +1,12 @@
-import { Box, Stack, useBreakpointValue } from "@chakra-ui/react";
+import { Box, HStack, Stack, useBreakpointValue } from "@chakra-ui/react";
 import { RemoveScroll } from "react-remove-scroll";
 import { MotionBox } from "styles/motion";
 import { AnimatePresence } from "framer-motion";
 import { ButtonLink } from "./button-link";
-import { ColorModeSwitcher } from "components/color-mode-switcher";
+import { ColorModeSwitcher } from "components/navigation/color-mode-switcher";
+import { LogoutButton } from "./logout-button";
+import { routerLinks } from "helpers/router-links";
+import { NavigationLink } from "./navigation-link";
 
 interface MobileNavigationProps {
   onClose: () => void;
@@ -35,7 +38,7 @@ export default function MobileNavigation({
               justifyContent={"center"}
               spacing={6}
             >
-              {/* {routerLinks.map((link, index) => (
+              {routerLinks.map((link, index) => (
                 <NavigationLink
                   key={index}
                   name={link.name}
@@ -43,19 +46,15 @@ export default function MobileNavigation({
                   onClose={onClose}
                   fontSize={"3xl"}
                 />
-              ))} */}
-              <Box w="full" pt={24}>
-                {/* <ButtonLink
-                  href="/login"
-                  onClick={onClose}
-                  w="full"
-                  rounded="full"
-                  fontWeight={500}
-                >
-                  Начать
-                </ButtonLink> */}
+              ))}
+              <HStack
+                pt={24}
+                alignItems="center"
+                spacing={12}
+              >
                 <ColorModeSwitcher />
-              </Box>
+                <LogoutButton />
+              </HStack>
             </Stack>
           </MotionBox>
         </RemoveScroll>

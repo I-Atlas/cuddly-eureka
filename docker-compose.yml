@@ -30,10 +30,10 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRE: ${JWT_EXPIRE}
 
-  frontend:
-    build: frontend
-    volumes:
-      - ./frontend:/app/
-      - /app/node_modules
-    ports:
-      - "3000:3000"
+  # frontend:
+  #   build: frontend
+  #   volumes:
+  #     - ./frontend:/app/
+  #     - /app/node_modules
+  #   ports:
+  #     - "3000:3000"

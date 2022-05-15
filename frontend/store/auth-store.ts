@@ -17,11 +17,17 @@ export interface IUserToAuthJSON {
 }
 
 export class AuthStore {
-  user = {} as IUser;
-  isAuth = false;
+  user: IUser;
+  isAuth: boolean;
 
   constructor() {
     makeAutoObservable(this);
+    this.isAuth = false;
+    this.user = {} as IUser;
+  }
+
+  get isAuthenticated() {
+    return this.isAuth;
   }
 
   setAuth(bool: boolean) {

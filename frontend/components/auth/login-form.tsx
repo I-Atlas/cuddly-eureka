@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Section } from "components/section";
 
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { PasswordField } from "./password-field";
 import { ButtonLink } from "components/navigation/button-link";
@@ -24,13 +24,15 @@ import { useLocalStorage } from "helpers/use-local-storage";
 import { context } from "store/root-store";
 import { IUserToAuthJSON } from "store/auth-store";
 import { useContext } from "react";
+import { useRouter } from "next/router";
+import { runInAction } from "mobx";
 
 type FormValues = {
   email: string;
   password: string;
 };
 
-function LoginForm() {
+const LoginForm = () => {
   const {
     register,
     handleSubmit,
@@ -38,7 +40,7 @@ function LoginForm() {
   } = useForm<FormValues>();
 
   const { post, response, loading, error } = useFetch<IUserToAuthJSON>(
-    "https://localhost:9000",
+    "http://localhost:9000"
   );
 
   const toast = useToast();
@@ -46,6 +48,8 @@ function LoginForm() {
   const { authStore } = useContext(context);
 
   const [token, setToken] = useLocalStorage<string>("token", "");
+
+  const router = useRouter();
 
   const onSubmit = handleSubmit(async (data) => {
     console.log("On Submit: ", data);
@@ -63,13 +67,17 @@ function LoginForm() {
     } else if (response.data && response.ok) {
       const { token, last_name, first_name, email, name } = response.data;
       setToken(token);
-      authStore.setUser({
-        last_name,
-        first_name,
-        email,
-        name,
+      runInAction(() => {
+        authStore.setUser({
+          last_name,
+          first_name,
+          email,
+          name,
+        });
       });
-      authStore.setAuth(true);
+      runInAction(() => {
+        authStore.setAuth(true);
+      });
       toast({
         title: "Успешный вход",
         description: "Вы успешно вошли в аккаунт",
@@ -78,6 +86,7 @@ function LoginForm() {
         isClosable: true,
         variant: "solid",
       });
+      setTimeout(() => router.push("/"), 1000);
     }
   });
 
@@ -107,7 +116,7 @@ function LoginForm() {
           rounded="xl"
           bg={useColorModeValue(
             "rgba( 255, 255, 255, 0.25 )",
-            "rgba( 22, 26, 30, 0.25 )",
+            "rgba( 22, 26, 30, 0.25 )"
           )}
           borderRadius="xl"
         >
@@ -154,6 +163,8 @@ function LoginForm() {
       </Stack>
     </Section>
   );
-}
+};
 
-export default observer(LoginForm);
+const obs = observer(LoginForm);
+
+export { obs as LoginForm };
