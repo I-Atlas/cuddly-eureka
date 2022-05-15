@@ -10,14 +10,10 @@ export default function Home({}: NextPage) {
 
   const options = {
     interceptors: {
-      // every time we make an http request, this will run 1st before the request is made
-      // url, path and route are supplied to the interceptor
-      // request options can be modified and must be returned
       // @ts-ignore
       request: async ({ options }) => {
         options.headers = {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data; boundary=something",
         };
         return options;
       },

@@ -15,15 +15,6 @@ import { Table } from "react-chakra-pagination";
 import { useState } from "react";
 import useFetch from "use-http";
 
-// type User = {
-//   id: number;
-//   name: string;
-//   email: string;
-//   phone: string;
-//   birthday: string;
-//   avatar_url: string;
-// };
-
 export interface IPayment {
   documentNumber: string;
   date: string;
@@ -177,7 +168,7 @@ export default function PaymentList() {
   return (
     <Box p="12">
       <Heading size="sm" as="h3">
-        List of Users
+        Платежные поручения
       </Heading>
 
       <Box mt="6">
