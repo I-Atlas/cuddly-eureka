@@ -7,6 +7,7 @@ type FileUploadProps = {
   accept?: string;
   multiple?: boolean;
   children?: ReactNode;
+  id?: string;
 };
 
 export const FileUpload: FC<FileUploadProps> = ({
