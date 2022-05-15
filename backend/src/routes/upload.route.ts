@@ -3,7 +3,7 @@ import passport from 'passport';
 import multer from 'multer';
 import * as xlsx from 'xlsx';
 import { IPayment, Payment } from '@/models/payment.model';
-import { IReturnRequest } from '@/models/returnRequest.model';
+import { IReturnRequest, ReturnRequest } from '@/models/returnRequest.model';
 import Decimal from 'decimal.js';
 
 const router = express.Router();
@@ -82,6 +82,14 @@ router.post(
             object[field.name] = parsers[field.type](row[fieldIndex]) as any;
           }
 
+          const payment = new Payment(object);
+
+          try {
+            await payment.save();
+          } catch (e) {
+            console.error(e);
+          }
+
           payments.push(object as IPayment);
         }
       }
@@ -109,12 +117,27 @@ router.post(
             object[field.name] = parsers[field.type](row[fieldIndex]) as any;
           }
 
+          const request = new ReturnRequest(object);
+
+          try {
+            await request.save();
+          } catch (e) {
+            console.error(e);
+          }
+
           returnRequests.push(object as IReturnRequest);
         }
       }
 
-      const paymentsWithReturnRequests = payments.map((payment) => {
-        const requests = returnRequests.filter((rr) => rr.documentNumber === payment.documentNumber);
+      const allPaymentNumbers = [
+        ...new Set([...payments.map((p) => p.documentNumber), ...returnRequests.map((rr) => rr.documentNumber)]),
+      ];
+
+      const fetchedPayments = await Payment.find({ documentNumber: { $in: allPaymentNumbers } }).exec();
+      const fetchedRequests = await ReturnRequest.find({ documentNumber: { $in: allPaymentNumbers } }).exec();
+
+      const paymentsWithReturnRequests = fetchedPayments.map((payment) => {
+        const requests = fetchedRequests.filter((rr) => rr.documentNumber === payment.documentNumber);
 
         return {
           data: payment,
@@ -122,7 +145,7 @@ router.post(
         };
       });
 
-      console.log({ paymentsWithReturnRequests });
+      // console.log({ all: ['documentNumber', allPaymentNumbers] }, JSON.stringify(paymentsWithReturnRequests, null, 2));
 
       const reportWorkbook = xlsx.utils.book_new();
 
@@ -135,24 +158,27 @@ router.post(
           for (const request of returnRequests) {
             const requestAmount = new Decimal(request.requestAmount);
 
+            let state = null;
             const requestResult = [payment.documentNumber, request.requestNumber];
 
             if (request.receiverINN !== payment.payerINN) {
-              result.push([...requestResult, 'Неверный ИНН']);
+              state = 'Неверный ИНН';
             } else if (request.receiverKPP !== payment.payerKPP) {
-              result.push([...requestResult, 'Неверный КПП']);
+              state = 'Неверный КПП';
             } else if (request.receiverAccount !== payment.payerAccount) {
-              result.push([...requestResult, 'Неверный Расч. Сч.']);
+              state = 'Неверный Расч. Сч.';
             } else if (request.receiverBic !== payment.payerBic) {
-              result.push([...requestResult, 'Неверный БИК']);
+              state = 'Неверный БИК';
             } else if (request.receiverCorr !== payment.payerCorr) {
-              result.push([...requestResult, 'Неверный Кор Сч.']);
+              state = 'Неверный Кор Сч.';
             } else if (requestAmount.plus(returnedAmount).greaterThan(paymentAmount)) {
-              result.push([...requestResult, 'Неверная сумма']);
+              state = 'Неверная сумма';
             } else {
               returnedAmount = returnedAmount.plus(requestAmount);
-              result.push([...requestResult, 'Соответствует']);
+              state = 'Соответствует';
             }
+
+            result.push([...requestResult, state]);
           }
 
           return result;
