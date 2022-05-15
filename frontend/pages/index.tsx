@@ -7,7 +7,7 @@ import { useLocalStorage } from "helpers/use-local-storage";
 
 export default function Home({}: NextPage) {
   const [token, setToken] = useLocalStorage<string>("token", "");
-  
+
   const options = {
     interceptors: {
       // every time we make an http request, this will run 1st before the request is made
@@ -15,7 +15,10 @@ export default function Home({}: NextPage) {
       // request options can be modified and must be returned
       // @ts-ignore
       request: async ({ options }) => {
-        options.headers.Authorization = `Bearer ${token}`;
+        options.headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data; boundary=something",
+        };
         return options;
       },
     },

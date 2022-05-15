@@ -18,11 +18,12 @@ type FormValues = {
   file_: FileList;
 };
 
-interface FileItem {
+interface FileItemProps {
   title: string;
+  endpoint: string;
 }
 
-export const FileItem: FC<FileItem> = ({ title }) => {
+export const FileItem: FC<FileItemProps> = ({ title, endpoint }) => {
   const {
     register,
     watch,
@@ -38,7 +39,11 @@ export const FileItem: FC<FileItem> = ({ title }) => {
 
   const onSubmit = handleSubmit(async (data) => {
     console.log("On Submit: ", data);
-    await post("/docs", { docs: data });
+
+    Array.from(data.file_).forEach(async (file) => {
+      await post(`upload/${endpoint}`, { file });
+    })
+    
     if (!response.ok || error) {
       toast({
         title: "Ошибка",

@@ -3,14 +3,14 @@ import { FileItem } from "./file-item";
 
 export const FileForm = () => {
   const data = [
-    { title: "платежные поручения", endPoint: "" },
-    { title: "заявки на возврат", endPoint: "" },
+    { title: "платежные поручения", endpoint: "payment" },
+    { title: "заявки на возврат", endpoint: "vozvrat" },
   ];
 
   return (
     <Section innerWidth="xl" id="upload-docs" position="relative">
       {data.map((item, index) => (
-        <FileItem key={index} title={item.title} />
+        <FileItem key={index} title={item.title} endpoint={item.endpoint} />
       ))}
     </Section>
   );
