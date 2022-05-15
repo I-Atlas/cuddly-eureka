@@ -31,19 +31,20 @@ export const FileItem: FC<FileItemProps> = ({ title, endpoint }) => {
     reset,
     formState: { errors },
   } = useForm<FormValues>();
-  const { post, response, loading, error } = useFetch();
+  const { post, response, loading, error } = useFetch(`upload/${endpoint}`);
 
   const toast = useToast();
 
   const files = watch("file_");
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log("On Submit: ", data);
-
     Array.from(data.file_).forEach(async (file) => {
-      await post(`upload/${endpoint}`, { file });
-    })
-    
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("mimeType", file.type);
+      await post(formData);
+    });
+
     if (!response.ok || error) {
       toast({
         title: "Ошибка",
