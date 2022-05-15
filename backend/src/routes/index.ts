@@ -10,6 +10,6 @@ const router = express.Router();
 router.use('/stores', stores);
 router.use(auth);
 router.use('/upload', upload);
-router.use(payment);
+router.use('/payment', payment);
 
 export default router;
