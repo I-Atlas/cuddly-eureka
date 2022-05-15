@@ -4,6 +4,7 @@ import multer from 'multer';
 import * as xlsx from 'xlsx';
 import { IPayment, Payment } from '@/models/payment.model';
 import { IReturnRequest } from '@/models/returnRequest.model';
+import Decimal from 'decimal.js';
 
 const router = express.Router();
 
@@ -112,18 +113,60 @@ router.post(
         }
       }
 
-      console.log({ payments, returnRequests });
+      const paymentsWithReturnRequests = payments.map((payment) => {
+        const requests = returnRequests.filter((rr) => rr.documentNumber === payment.documentNumber);
+
+        return {
+          data: payment,
+          returnRequests: requests.sort((a, b) => Number(a.requestNumber) - Number(b.requestNumber)),
+        };
+      });
+
+      console.log({ paymentsWithReturnRequests });
 
       const reportWorkbook = xlsx.utils.book_new();
 
-      const reportSheet = xlsx.utils.aoa_to_sheet([[1], [2], [3, 4]]);
+      const returnRequestsResult = paymentsWithReturnRequests
+        .map(({ data: payment, returnRequests }) => {
+          const paymentAmount = new Decimal(payment.amount);
+          let returnedAmount = new Decimal(0);
+          const result = [];
+
+          for (const request of returnRequests) {
+            const requestAmount = new Decimal(request.requestAmount);
+
+            const requestResult = [payment.documentNumber, request.requestNumber];
+
+            if (request.receiverINN !== payment.payerINN) {
+              result.push([...requestResult, 'Неверный ИНН']);
+            } else if (request.receiverKPP !== payment.payerKPP) {
+              result.push([...requestResult, 'Неверный КПП']);
+            } else if (request.receiverAccount !== payment.payerAccount) {
+              result.push([...requestResult, 'Неверный Расч. Сч.']);
+            } else if (request.receiverBic !== payment.payerBic) {
+              result.push([...requestResult, 'Неверный БИК']);
+            } else if (request.receiverCorr !== payment.payerCorr) {
+              result.push([...requestResult, 'Неверный Кор Сч.']);
+            } else if (requestAmount.plus(returnedAmount).greaterThan(paymentAmount)) {
+              result.push([...requestResult, 'Неверная сумма']);
+            } else {
+              returnedAmount = returnedAmount.plus(requestAmount);
+              result.push([...requestResult, 'Соответствует']);
+            }
+          }
+
+          return result;
+        })
+        .flat();
+
+      const reportSheet = xlsx.utils.aoa_to_sheet(returnRequestsResult);
 
       xlsx.utils.book_append_sheet(reportWorkbook, reportSheet);
 
-      var fileName = 'Report.xlsx';
+      const fileName = 'Report.xlsx';
       res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
       res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      var wbout = xlsx.write(reportWorkbook, { bookType: 'xlsx', type: 'buffer' });
+      const wbout = xlsx.write(reportWorkbook, { bookType: 'xlsx', type: 'buffer' });
       res.send(Buffer.from(wbout));
     } catch (e) {
       next(e);
