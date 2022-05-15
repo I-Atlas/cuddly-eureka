@@ -58,12 +58,12 @@ export const FileForm: FC = () => {
         variant: "solid",
       });
     } else if (response.ok) {
-      // const blob = await response.blob()
-      //    var fileName = response.getResponseHeader("fileName") //if you have the fileName header available
-      //    var link=document.createElement('a');
-      //    link.href=window.URL.createObjectURL(blob);
-      //    link.download=fileName;
-      //    link.click();
+      const blob = await response.blob();
+      const fileName = response.headers.get("Content-Disposition")?.split('filename=')[1].split(';')[0];;
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = fileName ?? 'Report';
+      link.click();
       toast({
         title: "Файлы успешно загружены",
         description: "Вы успешно загрузили файлы",
