@@ -1,7 +1,5 @@
 # [Citizens' Cyber Security Hackathon](https://rsue.ru/universitet/novosti/novosti.php?ELEMENT_ID=107749)
 
-![GitHub](https://img.shields.io/github/license/I-Atlas/crosshair-overlay?style=flat-square)
-
 ## 🏅 The KISS team took first place
 
 ![hackathon](/images/2.jpg)
@@ -31,7 +29,3 @@ We used TypeScript as our programming language, we have Node.js with Express on 
 We also made the visual pleasant for the user, there are animations and change of theme (light and dark)
 
 ![hackathon](/images/1.jpg)
-
-## 📑 License
-
-The project is licensed under the [GNU General Public License v3.0](https://github.com/I-Atlas/crosshair-overlay/blob/master/LICENSE).
