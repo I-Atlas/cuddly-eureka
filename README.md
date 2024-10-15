@@ -1,6 +1,6 @@
 # [Citizens' Cyber Security Hackathon](https://rsue.ru/universitet/novosti/novosti.php?ELEMENT_ID=107749)
 
-## 🏅 The KISS team took first place
+## 🏅 The KISS team took first (1) place
 
 ![hackathon](/images/2.jpg)
 
